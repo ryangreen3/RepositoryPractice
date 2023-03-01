@@ -1,0 +1,94 @@
+---
+title: "HW4"
+author: "Ryan Green"
+date: "2023-02-10"
+output:
+  word_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(purrr)
+library(dplyr)
+library(plyr)
+```
+
+```{r}
+#Q1
+iris <- iris
+#a
+nrow(iris)
+map(iris, length)
+
+#b
+#map(iris, unique)
+iris %>% 
+  map(unique) %>% 
+  map(length)
+```
+
+```{r}
+#Q2
+matrix1 = matrix(nrow=3, ncol=5) 
+for(i in 1:nrow(matrix1))        
+{
+  for(j in 1:ncol(matrix1))      
+  {
+    matrix1[i,j] = j-i           
+  }
+}
+print(matrix1)
+```
+
+```{r}
+#Q3
+tribble( ~mean, ~n,
+        -10, 10,
+        0, 10,
+        10, 10,
+        100, 10
+        ) -> parameters
+parameters
+
+test_1 <- pmap(parameters, rnorm)
+test_2 <- pmap(parameters, rnorm)
+
+test_1
+
+test_2
+```
+
+```{r}
+#Q4
+X <- list(12, 14, 15, 18, 19, 22,10,18,18)
+Mean <- list(16, 16, 16, 16, 16,16,16,16,16)
+sd <- list(2, 2, 2, 2, 2,2,2,2,2)
+
+#a
+pmap(list(X,Mean,sd), function(X, Mean, sd) (X-Mean)/sd)
+#b
+population_size <- length(X)
+pmap(list(X,Mean,sd), function(X, Mean, sd) ((X - Mean)/(sd/(sqrt(population_size)))))
+
+```
+
+```{r}
+#Q5
+V = c(10,15,17,22,32,38,42)
+
+#a
+keep(V, V<20)
+#b
+discard(V, V<20)
+
+```
+
+```{r}
+#Q6
+
+U = list(10,15,"mary",22,32,"james",42)
+map(U, safely(~ .x + 15))
+```
+
+The safely function returns a list with two components: result and error, and essentially, it returns output that will tell you if a function you may be trying to run works or an error occurs on a specific element. In this specific example, we have a list comprised of numeric and non-numeric elements and we are trying to use a map function to add 15 to each element in the list. When safely is used, it returns the two components: result and error. If it is possible to map what we are trying to, it returns result and the corresponding result which would be +15 to the element and error which would be null if it can run; if it can't run and an error occurs when it gets to a specific element of the list, it will return result as null and the error will explain why it errors out which in this case is because we are trying to add 15 to a non-numeric element, so we can see that we can't run this map function because it errors out on two elements as they are characters and not numeric elements as it displays in the output which is helpful to figure out what needs to be changed for it to work.
